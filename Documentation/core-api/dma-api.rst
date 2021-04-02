@@ -519,26 +519,23 @@ routines, e.g.:::
 Part II - Non-coherent DMA allocations
 --------------------------------------
 
-These APIs allow to allocate pages in the kernel direct mapping that are
-guaranteed to be DMA addressable.  This means that unlike dma_alloc_coherent,
-virt_to_page can be called on the resulting address, and the resulting
-struct page can be used for everything a struct page is suitable for.
+These APIs allow to allocate pages that are guaranteed to be DMA addressable
+by the passed in device, but which need explicit management of memory ownership
+for the kernel vs the device.
 
 If you don't understand how cache line coherency works between a processor and
 an I/O device, you should not be using this part of the API.
 
 ::
 
-	void *
-	dma_alloc_noncoherent(struct device *dev, size_t size,
-			dma_addr_t *dma_handle, enum dma_data_direction dir,
-			gfp_t gfp)
+	struct page *
+	dma_alloc_pages(struct device *dev, size_t size, dma_addr_t *dma_handle,
+			enum dma_data_direction dir, gfp_t gfp)
 
-This routine allocates a region of <size> bytes of consistent memory.  It
-returns a pointer to the allocated region (in the processor's virtual address
-space) or NULL if the allocation failed.  The returned memory may or may not
-be in the kernels direct mapping.  Drivers must not call virt_to_page on
-the returned memory region.
+This routine allocates a region of <size> bytes of non-coherent memory.  It
+returns a pointer to first struct page for the region, or NULL if the
+allocation failed. The resulting struct page can be used for everything a
+struct page is suitable for.
 
 It also returns a <dma_handle> which may be cast to an unsigned integer the
 same width as the bus and given to the device as the DMA address base of
@@ -559,13 +556,33 @@ reused.
 ::
 
 	void
+	dma_free_pages(struct device *dev, size_t size, struct page *page,
+			dma_addr_t dma_handle, enum dma_data_direction dir)
+
+Free a region of memory previously allocated using dma_alloc_pages().
+dev, size, dma_handle and dir must all be the same as those passed into
+dma_alloc_pages().  page must be the pointer returned by dma_alloc_pages().
+
+::
+
+	void *
+	dma_alloc_noncoherent(struct device *dev, size_t size,
+			dma_addr_t *dma_handle, enum dma_data_direction dir,
+			gfp_t gfp)
+
+This routine is a convenient wrapper around dma_alloc_pages that returns the
+kernel virtual address for the allocated memory instead of the page structure.
+
+::
+
+	void
 	dma_free_noncoherent(struct device *dev, size_t size, void *cpu_addr,
 			dma_addr_t dma_handle, enum dma_data_direction dir)
 
 Free a region of memory previously allocated using dma_alloc_noncoherent().
-dev, size and dma_handle and dir must all be the same as those passed into
+dev, size, dma_handle and dir must all be the same as those passed into
 dma_alloc_noncoherent().  cpu_addr must be the virtual address returned by
-the dma_alloc_noncoherent().
+dma_alloc_noncoherent().
 
 ::
 
