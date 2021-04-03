@@ -534,7 +534,7 @@ void __init init_IRQ(void)
 		if (i >= NR_IRQS)
 			break;
 		if (vector != IA32_SYSCALL_VECTOR && vector != KDB_VECTOR) { 
-			set_intr_gate(vector, interrupt[i]);
+			set_intr_gate(vector, interrupt[i]);  // interrupt 中断数组 是在 arch/i386/kernel/entry.S: 用宏定义生成的
 	}
 	}
 

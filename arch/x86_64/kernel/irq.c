@@ -91,6 +91,7 @@ skip:
  * do_IRQ handles all normal device IRQ's (the special
  * SMP cross-CPU interrupts have their own specific
  * handlers).
+ * 在 arch/i386/kernel/entry.S:common_interrupt() 中调用
  */
 asmlinkage unsigned int do_IRQ(struct pt_regs *regs)
 {	
@@ -98,9 +99,9 @@ asmlinkage unsigned int do_IRQ(struct pt_regs *regs)
 	unsigned irq = regs->orig_rax & 0xff;
 
 	irq_enter();
-	BUG_ON(irq > 256);
+	BUG_ON(irq > 256);  //最大只能式 1B 255
 
-	__do_IRQ(irq, regs);
+	__do_IRQ(irq, regs);  //在 kernel/irq、handle.c
 	irq_exit();
 
 	return 1;

@@ -118,7 +118,7 @@ fastcall unsigned int __do_IRQ(unsigned int irq, struct pt_regs *regs)
 		 * No locking required for CPU-local interrupts:
 		 */
 		desc->handler->ack(irq);
-		action_ret = handle_IRQ_event(irq, regs, desc->action);
+		action_ret = handle_IRQ_event(irq, regs, desc->action);  // 处理中断
 		desc->handler->end(irq);
 		return 1;
 	}
@@ -168,7 +168,7 @@ fastcall unsigned int __do_IRQ(unsigned int irq, struct pt_regs *regs)
 
 		spin_unlock(&desc->lock);
 
-		action_ret = handle_IRQ_event(irq, regs, action);
+		action_ret = handle_IRQ_event(irq, regs, action);  //处理中断
 
 		spin_lock(&desc->lock);
 		if (!noirqdebug)

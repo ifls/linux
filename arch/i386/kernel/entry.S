@@ -392,9 +392,10 @@ syscall_badsys:
 /*
  * Build the entry stubs and pointer table with
  * some assembler magic.
+ * 生成中断函数地址表，在main.c.start_kernel.init_IRQ()中注册到IDT
  */
 .data
-ENTRY(interrupt)
+ENTRY(interrupt)  
 .text
 
 vector=0
@@ -402,7 +403,7 @@ ENTRY(irq_entries_start)
 .rept NR_IRQS
 	ALIGN
 1:	pushl $vector-256
-	jmp common_interrupt // :413
+	jmp common_interrupt // 跳转到下面的地址
 .data
 	.long 1b
 .text
