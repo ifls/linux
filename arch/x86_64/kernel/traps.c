@@ -899,12 +899,13 @@ void do_call_debug(struct pt_regs *regs)
 	notify_die(DIE_CALL, "debug call", regs, 0, 255, SIGINT); 
 }
 
+// 初始化 陷阱 软中断 IDT
 void __init trap_init(void)
 {
-	set_intr_gate(0,&divide_error);
+	set_intr_gate(0,&divide_error);  // 除0错误
 	set_intr_gate_ist(1,&debug,DEBUG_STACK);
 	set_intr_gate_ist(2,&nmi,NMI_STACK);
-	set_system_gate(3,&int3);
+	set_system_gate(3,&int3);  // debug 断点专用
 	set_system_gate(4,&overflow);	/* int4-5 can be called from all */
 	set_system_gate(5,&bounds);
 	set_intr_gate(6,&invalid_op);
@@ -915,7 +916,7 @@ void __init trap_init(void)
 	set_intr_gate(11,&segment_not_present);
 	set_intr_gate_ist(12,&stack_segment,STACKFAULT_STACK);
 	set_intr_gate(13,&general_protection);
-	set_intr_gate(14,&page_fault);
+	set_intr_gate(14,&page_fault);  //缺页错误
 	set_intr_gate(15,&spurious_interrupt_bug);
 	set_intr_gate(16,&coprocessor_error);
 	set_intr_gate(17,&alignment_check);

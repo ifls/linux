@@ -264,7 +264,7 @@ void machine_real_restart(unsigned char *code, int length)
 		real_mode_switch, sizeof (real_mode_switch));
 	memcpy ((void *) (0x1000 - 100), code, length);
 
-	/* Set up the IDT for real mode. */
+	/* Set up the IDT for real mode. 加载 idt表地址 到 idtr寄存器 */
 
 	__asm__ __volatile__ ("lidt %0" : : "m" (real_mode_idt));
 

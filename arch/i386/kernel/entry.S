@@ -402,7 +402,7 @@ ENTRY(irq_entries_start)
 .rept NR_IRQS
 	ALIGN
 1:	pushl $vector-256
-	jmp common_interrupt
+	jmp common_interrupt // :413
 .data
 	.long 1b
 .text
@@ -411,10 +411,10 @@ vector=vector+1
 
 	ALIGN
 common_interrupt:
-	SAVE_ALL
+	SAVE_ALL    //保存上下文
 	movl %esp,%eax
-	call do_IRQ
-	jmp ret_from_intr
+	call do_IRQ  // 调用 处理函数
+	jmp ret_from_intr  //收尾中断处理
 
 #define BUILD_INTERRUPT(name, nr)	\
 ENTRY(name)				\

@@ -418,7 +418,7 @@ void __init parse_early_param(void)
 }
 
 /*
- *	Activate the first processor.
+ *	Activate the first processor.  启动内核
  */
 
 asmlinkage void __init start_kernel(void)
@@ -461,9 +461,9 @@ asmlinkage void __init start_kernel(void)
 		   __stop___param - __start___param,
 		   &unknown_bootoption);
 	sort_main_extable();
-	trap_init();
+	trap_init();  // 内部中断 初始化
 	rcu_init();
-	init_IRQ();
+	init_IRQ();   // 初始化， 中断响应表
 	pidhash_init();
 	init_timers();
 	softirq_init();
